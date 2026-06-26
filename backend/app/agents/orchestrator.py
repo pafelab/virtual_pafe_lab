@@ -86,7 +86,7 @@ def make_worker_node(cfg: AgentConfig, tools, tool_map, sandbox: FileSandbox,
                 break  # agent produced a final textual answer / handoff
 
             for call in ai.tool_calls:
-                tool = tool_map[call["name"]]
+                tool = tool_map.get(call["name"])
                 status = _STATUS_BY_TOOL.get(call["name"], AgentStatus.CODING)
                 await hub.update(cfg.agent_id, status,
                                  f"{cfg.name}: {call['name']}({_short(call['args'])})",
@@ -94,7 +94,15 @@ def make_worker_node(cfg: AgentConfig, tools, tool_map, sandbox: FileSandbox,
                 await hub.log(f"{cfg.name} → {call['name']} {_short(call['args'])}",
                               log_type="tool", agent_id=cfg.agent_id,
                               task_id=state["task_id"])
-                result = tool.invoke(call["args"])
+                # Surface tool failures back to the agent as a message instead of
+                # raising — one bad command must not abort the whole orchestration.
+                if tool is None:
+                    result = f"[tool error] unknown tool: {call['name']!r}"
+                else:
+                    try:
+                        result = tool.invoke(call["args"])
+                    except Exception as exc:  # noqa: BLE001
+                        result = f"[tool error] {call['name']}: {exc}"
                 convo.append(ToolMessage(content=str(result),
                                          tool_call_id=call["id"]))
 
