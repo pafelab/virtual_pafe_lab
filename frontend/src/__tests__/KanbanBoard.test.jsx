@@ -27,10 +27,10 @@ describe("KanbanBoard", () => {
 
   it("creates a task from the input", async () => {
     render(<KanbanBoard />);
-    fireEvent.change(screen.getAllByPlaceholderText(/new ticket title/i)[0], {
+    fireEvent.change(screen.getByPlaceholderText(/new ticket title/i), {
       target: { value: "Build dashboard" },
     });
-    fireEvent.click(screen.getAllByText("Add")[0]);
+    fireEvent.click(screen.getByText("Add"));
     await waitFor(() =>
       expect(api.createTask).toHaveBeenCalledWith({ title: "Build dashboard" })
     );

@@ -8,7 +8,7 @@ const TYPE_COLOR = {
 
 export function ActivityFeed({ logs }) {
   return (
-    <div className="h-72 overflow-y-auto rounded-2xl bg-slate-900 p-3 font-mono text-xs">
+    <div className="h-72 overflow-y-auto rounded-2xl bg-slate-900 p-3 font-mono text-xs" aria-live="polite">
       {logs.length === 0 && <p className="text-slate-500">// waiting for agent activity…</p>}
       {logs.map((l, i) => (
         <div key={i} className={TYPE_COLOR[l.log_type] || "text-slate-300"}>

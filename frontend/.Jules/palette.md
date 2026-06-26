@@ -1,0 +1,3 @@
+## 2025-02-15 - Initial UX Improvements
+**Learning:** React drag and drop elements need explicit tabIndex and keyboard support to be fully accessible, and activity feeds need polite aria-live regions so screen readers know when new entries are added. Also form elements without explicit visible labels need aria-labels or sr-only labels.
+**Action:** Always add `aria-live="polite"` to dynamically updating text regions like logs/feeds. Always add `tabIndex={0}` and a keyboard handler (or `role="button"` if appropriate) to draggable elements to ensure keyboard users can interact with them. Always associate inputs with labels, even if the label is hidden.
