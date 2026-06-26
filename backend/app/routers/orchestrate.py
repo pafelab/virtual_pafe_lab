@@ -44,7 +44,7 @@ async def orchestrate(task_id: int, db: Session = Depends(get_db)):
         final = await run_orchestration(workers, sandbox, terminal, task)
         task.status = models.TaskStatus.DONE
         db.commit()
-        summary = final["messages"][-1].content if final["messages"] else ""
+        summary = final["messages"][-1].text if final["messages"] else ""
         return {"task_id": task_id, "status": "done", "summary": summary,
                 "iterations": final.get("iterations", 0)}
     except Exception as exc:  # noqa: BLE001

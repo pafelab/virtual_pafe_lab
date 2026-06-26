@@ -98,7 +98,7 @@ def make_worker_node(cfg: AgentConfig, tools, tool_map, sandbox: FileSandbox,
                 convo.append(ToolMessage(content=str(result),
                                          tool_call_id=call["id"]))
 
-        final_text = convo[-1].content if convo else ""
+        final_text = convo[-1].text if convo else ""
         await hub.update(cfg.agent_id, AgentStatus.IDLE,
                          f"{cfg.name}: handed off", progress=100)
         await hub.log(f"{cfg.name}: {final_text[:300]}", log_type="handoff",
@@ -121,7 +121,7 @@ def make_supervisor_node(workers: dict[str, AgentConfig]):
             return {"next_agent": "FINISH", "iterations": iterations}
 
         transcript = "\n\n".join(
-            f"{m.type}: {str(m.content)[:600]}" for m in state["messages"][-8:]
+            f"{m.type}: {m.text[:600]}" for m in state["messages"][-8:]
         )
         routing_prompt = f"""You are the office supervisor. Decide who acts next.
 
@@ -138,7 +138,8 @@ Respond with ONLY JSON: {{"next": "<worker_key or FINISH>", "reason": "<short>"}
 Choose FINISH when the task is implemented AND verified (tests pass)."""
 
         ai = await model.ainvoke([HumanMessage(content=routing_prompt)])
-        choice, reason = _parse_route(ai.content, valid=set(workers) | {"FINISH"})
+        # langchain-core 1.x returns content as a list of blocks; .text gives the string.
+        choice, reason = _parse_route(ai.text, valid=set(workers) | {"FINISH"})
         await hub.log(f"Supervisor → {choice} ({reason})", log_type="info",
                       task_id=state["task_id"])
         return {"next_agent": choice, "iterations": iterations + 1}
