@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api } from "../api/client";
+import { UserPlus, Loader2 } from "lucide-react";
 
 const EMPTY = {
   name: "", role: "", personality_prompt: "", system_instructions: "",
@@ -25,46 +26,53 @@ export function AgentCreator({ onCreated }) {
   }
 
   return (
-    <div className="space-y-2 rounded-2xl border border-slate-200 bg-white p-4">
-      <h3 className="text-sm font-bold">⚙️ Hire an Agent</h3>
-      <div>
-        <label htmlFor="agent-name" className="sr-only">Name</label>
-        <input id="agent-name" className="input" placeholder="Name (e.g. Ben)" value={form.name} onChange={set("name")} />
+    <div className="space-y-4 rounded-2xl border border-slate-800/80 bg-slate-900/35 p-5 backdrop-blur-xl">
+      <div className="flex items-center gap-2 border-b border-slate-900 pb-3">
+        <UserPlus className="h-4.5 w-4.5 text-indigo-400" />
+        <h3 className="text-sm font-bold text-slate-200 tracking-wide">Hire an Agent</h3>
       </div>
-      <div>
-        <label htmlFor="agent-role" className="sr-only">Role</label>
-        <input id="agent-role" className="input" placeholder="Role (e.g. QA Engineer)" value={form.role} onChange={set("role")} />
+      
+      <div className="space-y-3">
+        <div>
+          <label htmlFor="agent-name" className="sr-only">Name</label>
+          <input id="agent-name" className="input" placeholder="Name (e.g. Anya)" value={form.name} onChange={set("name")} />
+        </div>
+        <div>
+          <label htmlFor="agent-role" className="sr-only">Role</label>
+          <input id="agent-role" className="input" placeholder="Role (e.g. Senior Developer)" value={form.role} onChange={set("role")} />
+        </div>
+        <div>
+          <label htmlFor="agent-personality" className="sr-only">Personality</label>
+          <textarea id="agent-personality" className="input" rows={2} placeholder="Personality (e.g. meticulous, uses emoji log highlights)"
+            value={form.personality_prompt} onChange={set("personality_prompt")} />
+        </div>
+        <div>
+          <label htmlFor="agent-instructions" className="sr-only">Expertise / system instructions</label>
+          <textarea id="agent-instructions" className="input" rows={3} placeholder="Expertise / system instructions"
+            value={form.system_instructions} onChange={set("system_instructions")} />
+        </div>
+        <div>
+          <label htmlFor="agent-avatar" className="sr-only">Avatar URL</label>
+          <input id="agent-avatar" className="input" placeholder="Avatar URL (optional)" value={form.avatar_url} onChange={set("avatar_url")} />
+        </div>
+        <div>
+          <label htmlFor="agent-room" className="sr-only">Room</label>
+          <select id="agent-room" className="input bg-slate-950 text-slate-300 border-slate-800" value={form.room} onChange={set("room")}>
+            <option value="dev_lab">Development Lab</option>
+            <option value="qa_bay">QA &amp; Testing Bay</option>
+            <option value="strategy">Strategy Lounge</option>
+          </select>
+        </div>
       </div>
-      <div>
-        <label htmlFor="agent-personality" className="sr-only">Personality</label>
-        <textarea id="agent-personality" className="input" rows={2} placeholder="Personality (e.g. meticulous, loves emojis 🕷️)"
-          value={form.personality_prompt} onChange={set("personality_prompt")} />
-      </div>
-      <div>
-        <label htmlFor="agent-instructions" className="sr-only">Expertise / system instructions</label>
-        <textarea id="agent-instructions" className="input" rows={3} placeholder="Expertise / system instructions"
-          value={form.system_instructions} onChange={set("system_instructions")} />
-      </div>
-      <div>
-        <label htmlFor="agent-avatar" className="sr-only">Avatar URL</label>
-        <input id="agent-avatar" className="input" placeholder="Avatar URL (optional)" value={form.avatar_url} onChange={set("avatar_url")} />
-      </div>
-      <div>
-        <label htmlFor="agent-room" className="sr-only">Room</label>
-        <select id="agent-room" className="input" value={form.room} onChange={set("room")}>
-          <option value="dev_lab">Development Lab</option>
-          <option value="qa_bay">QA &amp; Testing Bay</option>
-          <option value="strategy">Strategy Lounge</option>
-        </select>
-      </div>
+
       <button
         onClick={submit}
         disabled={busy || !form.name || !form.role}
-        className="w-full rounded-lg bg-blue-600 py-2 text-sm font-semibold text-white disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-1 transition-opacity"
+        className="w-full rounded-xl bg-gradient-to-r from-indigo-650 to-violet-650 py-2.5 text-sm font-semibold text-white transition-all duration-300 disabled:opacity-40 disabled:pointer-events-none hover:shadow-lg hover:shadow-indigo-500/20 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
       >
         {busy ? (
            <span className="flex items-center justify-center gap-2">
-             <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" aria-hidden="true" />
+             <Loader2 className="h-4 w-4 animate-spin text-white" />
              Hiring…
            </span>
          ) : "Hire Agent"}
